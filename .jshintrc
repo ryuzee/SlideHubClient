@@ -1,0 +1,19 @@
+{
+  "strict" : true,
+  "node" : true,
+  "forin" : false,
+  "indent" : 2,
+  "maxlen" : 80,
+  "unused" : true,
+  "undef" : true,
+  "browser" : true,
+  "dojo" :  true,
+  "devel" : true,
+  "debug" : true,
+  "globals": {
+    "_": false,
+    "Backbone": false
+  },
+  "eqnull" : false,
+  "expr" : false
+}

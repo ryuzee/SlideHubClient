@@ -1,0 +1,36 @@
+@font-face {
+  font-family: 'mplus';
+  src: url('./assets/fonts/mplus-1p-regular.ttf') format('truetype');
+}
+
+div#right-area {
+    margin:0px;
+    padding:8px;
+    color:#333;
+}
+
+iframe#slide-frame {
+    width:100%;
+    border:0px;
+    margin:0px;
+    margin-bottom:0px;
+    padding:0px;
+    vertical-align:bottom;
+}
+
+div#description {
+    border:1px solid #ccc;
+    background-color:#eee;
+    padding:0.8em;
+    margin-top:0.8em;
+    color: #333;
+    margin-bottom:0.8em;
+}
+
+ul.transcript {
+    padding:20px;
+}
+
+.list-active, .list-active a {
+    background-color: #ccc !important;
+}
