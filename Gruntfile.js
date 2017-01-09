@@ -12,6 +12,9 @@ module.exports = function (grunt) {
             },
             mac: {
                 command: 'hdiutil create -ov -srcfolder ./SlideHub-darwin-x64 -fs HFS+ -format UDZO -imagekey zlib-level=9 -volname "SlideHub" SlideHub.dmg'
+            },
+            build_linux: {
+                command: './node_modules/.bin/electron-packager . SlideHub --platform=linux --arch=x64 --version=0.35.1 --icon=SlideHub.icns --overwrite'
             }
         },
         'plato': {
