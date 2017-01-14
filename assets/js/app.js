@@ -17,6 +17,79 @@ $(function(){
 
   retrieve_slides(endpoint + '/api/v1/slides');
 
+  var get_slide_info = function(id) {
+    var dfd = $.Deferred();
+    var result;
+    $.getJSON(endpoint + '/api/v1/slides/' + id, function(data) {
+      result = data;
+      $(".slidename").html(data.name);
+      $("#description").html(data.description);
+      $("#slide-info").html(sprintf("Created by %s Published %s in %s", data.username, data.created_at, data.category_name));
+      var tag = "";
+      for (i in data.tags) {
+        tag = tag + data.tags[i] + " ";
+      }
+      $("#slide-tag").html(tag);
+    }).done(function() {
+      console.log('success');
+      dfd.resolve(result);
+    }).fail(function() {
+      alert('failed to retrieve slides');
+      dfd.reject();
+    });
+    return dfd.promise();
+  };
+
+  var get_transcript = function(id) {
+    var dfd = $.Deferred();
+    var result;
+    // Transcript取得
+    $("ul#transcript-list li").remove();
+    $.getJSON(endpoint + '/api/v1/slides/' + id + '/transcript', function(data) {
+      result = data;
+      for (i in data.transcripts) {
+        var item = sprintf('<li>%s</li>', data.transcripts[i]);
+        $("#transcript-list").append(item);
+      }
+    }).done(function() {
+      console.log('success');
+      dfd.resolve(result);
+    }).fail(function() {
+      alert('failed to retrieve slides');
+      dfd.reject();
+    });
+    return dfd.promise();
+  };
+
+  var get_user_info = function(user_id) {
+    var dfd = $.Deferred();
+    var result;
+    $.getJSON(endpoint + '/api/v1/users/' + user_id, function(data) {
+      result = data;
+      $("#username").html(data.display_name);
+      $("#biography").html(data.biography);
+    }).done(function() {
+      console.log('success');
+      dfd.resolve(result);
+    }).fail(function() {
+      alert('failed to retrieve slides');
+      dfd.reject();
+    });
+    return dfd.promise();
+  };
+
+  // スライド表示
+  var load_frame = function(id) {
+    var dfd = $.Deferred();
+    var $frame = $("#slide-frame");
+    $frame.attr("src", endpoint + "/html_player/" + id);
+    $frame.on('load', function(){
+      $frame.height($frame.width() * 3 / 4);
+      $frame.iFrameResize([]);
+    });
+    dfd.resolve();
+  };
+
   // 検索
   $("#search-text").on('change', function(){
     var txt = $(this).val();
@@ -33,60 +106,19 @@ $(function(){
 
   // 左メニュークリック時
   $('ul.left-navi-list').on('click', 'a', function() {
-    id = $(this).attr("data-id");
+    var id = $(this).attr("data-id");
     if (!id) { return; }
     $("li.slide-item").removeClass('list-active');
     $("li#item" +id).addClass('list-active');
     $(".tab-pane").show();
 
-    // スライド表示
-    var $frame = $("#slide-frame");
-    $frame.attr("src", endpoint + "/html_player/" + id);
-    $frame.on('load', function(){
-      $frame.height($frame.width() * 3 / 4);
-      $frame.iFrameResize([]);
-    });
-
-    // スライド情報取得
     var user_id;
-    $.ajaxSetup({async: false});
-    $.getJSON(endpoint + '/api/v1/slides/' + id, function(data) {
-      $(".slidename").html(data.name);
-      $("#description").html(data.description);
-      $("#slide-info").html(sprintf("Created by %s Published %s in %s", data.username, data.created_at, data.category_name));
-      var tag = "";
-      for (i in data.tags) {
-        tag = tag + data.tags[i] + " ";
-      }
-      $("#slide-tag").html(tag);
-      user_id = data.user_id;
-    }).done(function() {
-      console.log('success');
-    }).fail(function() {
-      alert('failed to retrieve slides');
-    });
-
-    // Transcript取得
-    $("ul#transcript-list li").remove();
-    $.getJSON(endpoint + '/api/v1/slides/' + id + '/transcript', function(data) {
-      for (i in data.transcripts) {
-        var item = sprintf('<li>%s</li>', data.transcripts[i]);
-        $("#transcript-list").append(item);
-      }
-    }).done(function() {
-      console.log('success');
-    }).fail(function() {
-      alert('failed to retrieve slides');
-    });
-
-    // ユーザー情報取得
-    $.getJSON(endpoint + '/api/v1/users/' + user_id, function(data) {
-      $("#username").html(data.display_name);
-      $("#biography").html(data.biography);
-    }).done(function() {
-      console.log('success');
-    }).fail(function() {
-      alert('failed to retrieve slides');
+    $.when(get_slide_info(id))
+    .then(function(data){
+      user_id = data.user_id
+      load_frame(id),
+      get_transcript(id),
+      get_user_info(user_id)
     });
 
     // タブ切り替え
