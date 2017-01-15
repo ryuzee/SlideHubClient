@@ -27,7 +27,7 @@ $(function(){
       $("#slide-info").html(sprintf("Created by %s Published %s in %s", data.username, data.created_at, data.category_name));
       var tag = "";
       for (i in data.tags) {
-        tag = tag + data.tags[i] + " ";
+        tag = tag + sprintf('<a class="tag" data-tag="%s">%s</a> ', data.tags[i], data.tags[i]);
       }
       $("#slide-tag").html(tag);
     }).done(function() {
@@ -102,6 +102,12 @@ $(function(){
   $("#show-all").on('click', function(){
     $("#search-text").val("");
     retrieve_slides(endpoint + '/api/v1/slides');
+  });
+
+  // タグクリック
+  $("span#slide-tag").on('click', 'a', function(){
+    var tag = $(this).attr("data-tag");
+    retrieve_slides(endpoint + '/api/v1/slides?tag=' + tag);
   });
 
   // 左メニュークリック時
