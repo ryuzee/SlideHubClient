@@ -1,0 +1,10 @@
+{
+    "extends": ["eslint:recommended"],
+    "plugins": [],
+    "parserOptions": {},
+    "env": {"browser": true, "jquery": true},
+    "globals": {"sprintf", "Mousetrap"},
+    "rules":{
+      "no-console":0
+    }
+}
